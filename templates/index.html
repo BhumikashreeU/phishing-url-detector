@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phishing URL Detector</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            margin: 0;
+            padding: 40px;
+        }
+
+        .main {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+      
+        .left {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+
+        .left h2 {
+            margin-bottom: 20px;
+        }
+
+        .left form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #ccc;
+            border-radius: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #2c5364;
+            box-shadow: 0 0 5px rgba(44, 83, 100, 0.3);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #2c5364, #203a43);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+        }
+      
+        .right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .safe { color: #2ecc71; font-weight: bold; }
+        .suspicious { color: #f39c12; font-weight: bold; }
+        .danger { color: #e74c3c; font-weight: bold; }
+
+        ul {
+            padding-left: 18px;
+        }
+
+        h3 {
+            margin-bottom: 10px;
+        }
+      
+        .progress {
+            height: 10px;
+            background: #eee;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="main">
+
+    <div class="left">
+        <h2>🔐 Phishing URL Detector</h2>
+
+        <form method="POST">
+            <input type="text" name="url" placeholder="Enter URL here..." value="{{ url }}" required>
+            <button type="submit">URL Analysis</button>
+        </form>
+    </div>
+
+    <div class="right">
+
+        {% if score is not none %}
+        <div class="card">
+            <h3>Result</h3>
+
+            <p><strong>Score:</strong> {{ score }}</p>
+
+            <div class="progress">
+                <div class="progress-bar"
+                     style="
+                     width: {{ score }}%;
+                     background:
+                     {% if score < 20 %}#2ecc71
+                     {% elif score < 50 %}#f39c12
+                     {% else %}#e74c3c
+                     {% endif %};
+                     ">
+                </div>
+            </div>
+
+            <p class="result">
+                <strong>Status:</strong>
+                <span class="
+                    {% if 'Safe' in result %}safe
+                    {% elif 'Suspicious' in result %}suspicious
+                    {% else %}danger
+                    {% endif %}
+                ">
+                    {{ result }}
+                </span>
+            </p>
+        </div>
+        {% endif %}
+
+        {% if reasons %}
+        <div class="card">
+            <h3>🔍 Reason?</h3>
+            <ul>
+                {% for r in reasons %}
+                    <li>{{ r }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if precautions %}
+        <div class="card">
+            <h3>⚠️ Precautions</h3>
+            <ul>
+                {% for p in precautions %}
+                    <li>{{ p }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
